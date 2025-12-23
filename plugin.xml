@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-amplitude"
+        version="1.0.0">
+
+    <name>Amplitude</name>
+    <description>Cordova plugin for Amplitude Analytics SDK</description>
+    <license>MIT</license>
+    <keywords>cordova,amplitude,analytics,tracking</keywords>
+
+    <js-module src="www/Amplitude.js" name="Amplitude">
+        <clobbers target="window.Amplitude" />
+    </js-module>
+
+    <!-- iOS Platform -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="AmplitudePlugin">
+                <param name="ios-package" value="AmplitudePlugin" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/AmplitudePlugin.h" />
+        <source-file src="src/ios/AmplitudePlugin.m" />
+
+        <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/" />
+            </config>
+            <pods use-frameworks="true">
+                <pod name="AmplitudeSwift" spec="~> 1.9" />
+            </pods>
+        </podspec>
+    </platform>
+
+    <!-- Android Platform -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="AmplitudePlugin">
+                <param name="android-package" value="com.gratitude.amplitude.AmplitudePlugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        </config-file>
+
+        <source-file src="src/android/AmplitudePlugin.java" target-dir="src/com/gratitude/amplitude" />
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+    </platform>
+
+</plugin>

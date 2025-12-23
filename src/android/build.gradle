@@ -1,0 +1,19 @@
+repositories {
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    implementation 'com.amplitude:analytics-android:1.+'
+}
+
+android {
+    defaultConfig {
+        minSdkVersion 21
+    }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}

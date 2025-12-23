@@ -18,20 +18,16 @@
             return;
         }
 
-        // Create configuration
-        Configuration *amplitudeConfig = [Configuration initWithApiKey:apiKey];
+        // Create configuration using the correct initializer
+        Configuration *amplitudeConfig = [[Configuration alloc] initWithApiKey:apiKey];
 
         // Set optional configuration
-        if (config[@"trackingSessionEvents"]) {
-            amplitudeConfig.defaultTracking.sessions = [config[@"trackingSessionEvents"] boolValue];
-        }
-
         if (config[@"minTimeBetweenSessionsMillis"]) {
             amplitudeConfig.minTimeBetweenSessionsMillis = [config[@"minTimeBetweenSessionsMillis"] integerValue];
         }
 
         // Initialize Amplitude
-        self.amplitude = [Amplitude initWithConfiguration:amplitudeConfig];
+        self.amplitude = [[Amplitude alloc] initWithConfiguration:amplitudeConfig];
 
         // Set user ID if provided
         if (config[@"userId"] && [config[@"userId"] length] > 0) {
@@ -54,10 +50,11 @@
         NSString *eventName = [command.arguments objectAtIndex:0];
         NSDictionary *properties = [command.arguments objectAtIndex:1];
 
+        // Use the track method with eventType and eventProperties
         if (properties && [properties count] > 0) {
-            [self.amplitude track:eventName eventProperties:properties];
+            [self.amplitude trackWithEventType:eventName eventProperties:properties];
         } else {
-            [self.amplitude track:eventName];
+            [self.amplitude trackWithEventType:eventName];
         }
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Event tracked successfully"];
@@ -81,11 +78,11 @@
         }
 
         if (userProperties && [userProperties count] > 0) {
-            Identify *identify = [Identify new];
+            Identify *identifyObj = [[Identify alloc] init];
             for (NSString *key in userProperties) {
-                [identify set:key value:userProperties[key]];
+                [identifyObj setWithProperty:key value:userProperties[key]];
             }
-            [self.amplitude identify:identify];
+            [self.amplitude identifyWithIdentify:identifyObj];
         }
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"User identified successfully"];
@@ -120,11 +117,11 @@
         NSDictionary *properties = [command.arguments objectAtIndex:0];
 
         if (properties && [properties count] > 0) {
-            Identify *identify = [Identify new];
+            Identify *identifyObj = [[Identify alloc] init];
             for (NSString *key in properties) {
-                [identify set:key value:properties[key]];
+                [identifyObj setWithProperty:key value:properties[key]];
             }
-            [self.amplitude identify:identify];
+            [self.amplitude identifyWithIdentify:identifyObj];
         }
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"User properties set successfully"];
@@ -144,22 +141,17 @@
         NSNumber *quantity = [command.arguments objectAtIndex:1];
         NSNumber *price = [command.arguments objectAtIndex:2];
         NSString *revenueType = command.arguments.count > 3 ? [command.arguments objectAtIndex:3] : nil;
-        NSDictionary *properties = command.arguments.count > 4 ? [command.arguments objectAtIndex:4] : nil;
 
-        Revenue *revenue = [Revenue new];
-        revenue.productId = productId;
-        revenue.quantity = [quantity integerValue];
-        revenue.price = [price doubleValue];
+        Revenue *revenueObj = [[Revenue alloc] init];
+        revenueObj.productId = productId;
+        revenueObj.quantity = [quantity integerValue];
+        revenueObj.price = [price doubleValue];
 
-        if (revenueType && [revenueType length] > 0) {
-            revenue.revenueType = revenueType;
+        if (revenueType && ![revenueType isEqual:[NSNull null]] && [revenueType length] > 0) {
+            revenueObj.revenueType = revenueType;
         }
 
-        if (properties && [properties count] > 0) {
-            revenue.properties = properties;
-        }
-
-        [self.amplitude revenue:revenue];
+        [self.amplitude revenueWithRevenue:revenueObj];
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Revenue logged successfully"];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
@@ -220,9 +212,9 @@
             return;
         }
 
-        NSNumber *sessionId = @([self.amplitude getSessionId]);
+        NSInteger sessionId = [self.amplitude getSessionId];
 
-        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[sessionId intValue]];
+        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)sessionId];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     }];
 }

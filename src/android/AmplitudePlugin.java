@@ -257,9 +257,7 @@ public class AmplitudePlugin extends CordovaPlugin {
                     revenue.setRevenueType(revenueType);
                 }
 
-                if (properties != null && properties.length() > 0) {
-                    revenue.setEventProperties(convertToMap(properties));
-                }
+                // Note: Android SDK does not support event properties on Revenue objects
 
                 amplitude.revenue(revenue);
 

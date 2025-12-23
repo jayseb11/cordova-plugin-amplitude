@@ -18,8 +18,8 @@
             return;
         }
 
-        // Create configuration using the correct initializer
-        Configuration *amplitudeConfig = [[Configuration alloc] initWithApiKey:apiKey];
+        // Create configuration using AMP prefix for Objective-C bridge
+        AMPConfiguration *amplitudeConfig = [[AMPConfiguration alloc] initWithApiKey:apiKey];
 
         // Set optional configuration
         if (config[@"minTimeBetweenSessionsMillis"]) {
@@ -50,12 +50,12 @@
         NSString *eventName = [command.arguments objectAtIndex:0];
         NSDictionary *properties = [command.arguments objectAtIndex:1];
 
-        // Use the track method with eventType and eventProperties
+        // Create BaseEvent and track it
+        AMPBaseEvent *event = [[AMPBaseEvent alloc] initWithEventType:eventName];
         if (properties && [properties count] > 0) {
-            [self.amplitude trackWithEventType:eventName eventProperties:properties];
-        } else {
-            [self.amplitude trackWithEventType:eventName];
+            event.eventProperties = properties;
         }
+        [self.amplitude track:event];
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Event tracked successfully"];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
@@ -78,11 +78,11 @@
         }
 
         if (userProperties && [userProperties count] > 0) {
-            Identify *identifyObj = [[Identify alloc] init];
+            AMPIdentify *identifyObj = [[AMPIdentify alloc] init];
             for (NSString *key in userProperties) {
                 [identifyObj setWithProperty:key value:userProperties[key]];
             }
-            [self.amplitude identifyWithIdentify:identifyObj];
+            [self.amplitude identify:identifyObj];
         }
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"User identified successfully"];
@@ -117,11 +117,11 @@
         NSDictionary *properties = [command.arguments objectAtIndex:0];
 
         if (properties && [properties count] > 0) {
-            Identify *identifyObj = [[Identify alloc] init];
+            AMPIdentify *identifyObj = [[AMPIdentify alloc] init];
             for (NSString *key in properties) {
                 [identifyObj setWithProperty:key value:properties[key]];
             }
-            [self.amplitude identifyWithIdentify:identifyObj];
+            [self.amplitude identify:identifyObj];
         }
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"User properties set successfully"];
@@ -142,7 +142,7 @@
         NSNumber *price = [command.arguments objectAtIndex:2];
         NSString *revenueType = command.arguments.count > 3 ? [command.arguments objectAtIndex:3] : nil;
 
-        Revenue *revenueObj = [[Revenue alloc] init];
+        AMPRevenue *revenueObj = [[AMPRevenue alloc] init];
         revenueObj.productId = productId;
         revenueObj.quantity = [quantity integerValue];
         revenueObj.price = [price doubleValue];
@@ -151,7 +151,7 @@
             revenueObj.revenueType = revenueType;
         }
 
-        [self.amplitude revenueWithRevenue:revenueObj];
+        [self.amplitude revenue:revenueObj];
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Revenue logged successfully"];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];

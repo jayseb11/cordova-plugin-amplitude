@@ -1,14 +1,13 @@
 {
   "name": "cordova-plugin-amplitude",
-  "version": "1.1.1",
-  "description": "Cordova plugin for Amplitude Analytics SDK with web support",
+  "version": "1.2.0",
+  "description": "Cordova plugin for Amplitude Analytics SDK (iOS and Android)",
   "main": "www/Amplitude.js",
   "cordova": {
     "id": "cordova-plugin-amplitude",
     "platforms": [
       "android",
-      "ios",
-      "browser"
+      "ios"
     ]
   },
   "repository": {
@@ -20,23 +19,13 @@
     "ecosystem:cordova",
     "cordova-android",
     "cordova-ios",
-    "cordova-browser",
     "amplitude",
     "analytics",
     "tracking",
-    "events",
-    "web"
+    "events"
   ],
   "author": "Gratitude",
   "license": "MIT",
-  "peerDependencies": {
-    "@amplitude/analytics-browser": "^2.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@amplitude/analytics-browser": {
-      "optional": true
-    }
-  },
   "engines": {
     "cordovaDependencies": {
       "1.0.0": {

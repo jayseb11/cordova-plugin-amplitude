@@ -1,6 +1,6 @@
 # Cordova Plugin Amplitude
 
-A Cordova plugin for integrating Amplitude Analytics SDK into iOS, Android, and Web applications.
+A Cordova plugin for integrating Amplitude Analytics SDK into iOS and Android native applications.
 
 ## Installation
 
@@ -14,21 +14,12 @@ Or install from GitHub:
 cordova plugin add https://github.com/jayseb11/cordova-plugin-amplitude.git
 ```
 
-### Web Support
-
-For web/browser support, install the browser SDK:
-
-```bash
-npm install @amplitude/analytics-browser
-```
-
-The plugin automatically detects the platform and uses the appropriate SDK.
-
 ## Supported Platforms
 
 - iOS (via AmplitudeSwift ~> 1.9)
 - Android (via com.amplitude:analytics-android:1.+)
-- Web/Browser (via @amplitude/analytics-browser ^2.0.0)
+
+> **Note**: For web/browser support, use `@amplitude/analytics-browser` directly in your application instead of this Cordova plugin.
 
 ## API Reference
 

@@ -1,8 +1,9 @@
-const exec = require('cordova/exec');
-const SERVICE_NAME = 'AmplitudePlugin';
-
 // Check if running in browser (not Cordova)
 const isBrowser = typeof window !== 'undefined' && !window.cordova;
+
+// Only require cordova/exec if in Cordova environment
+const exec = !isBrowser ? require('cordova/exec') : null;
+const SERVICE_NAME = 'AmplitudePlugin';
 
 // Lazy load browser SDK only when needed
 let browserAmplitude = null;
@@ -12,12 +13,17 @@ let BrowserRevenue = null;
 async function getBrowserSDK() {
     if (!browserAmplitude && isBrowser) {
         try {
-            const sdk = await import('@amplitude/analytics-browser');
-            browserAmplitude = sdk;
-            BrowserIdentify = sdk.Identify;
-            BrowserRevenue = sdk.Revenue;
+            // Dynamic import for browser SDK
+            if (typeof window !== 'undefined' && window.amplitudeBrowser) {
+                browserAmplitude = window.amplitudeBrowser;
+            } else {
+                const sdk = await import('@amplitude/analytics-browser');
+                browserAmplitude = sdk;
+            }
+            BrowserIdentify = browserAmplitude.Identify;
+            BrowserRevenue = browserAmplitude.Revenue;
         } catch (error) {
-            console.warn('Amplitude browser SDK not available:', error);
+            console.error('Amplitude browser SDK not available:', error);
         }
     }
     return browserAmplitude;
@@ -49,9 +55,6 @@ class AmplitudePlugin {
             }
 
             const options = {};
-            if (config.userId) {
-                options.userId = config.userId;
-            }
             if (config.minTimeBetweenSessionsMillis) {
                 options.sessionTimeout = config.minTimeBetweenSessionsMillis;
             }

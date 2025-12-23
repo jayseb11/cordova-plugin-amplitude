@@ -18,8 +18,8 @@
             return;
         }
 
-        // Create configuration using AMP prefix for Objective-C bridge
-        AMPConfiguration *amplitudeConfig = [[AMPConfiguration alloc] initWithApiKey:apiKey];
+        // Create configuration using correct initializer
+        AMPConfiguration *amplitudeConfig = [AMPConfiguration initWithApiKey:apiKey];
 
         // Set optional configuration
         if (config[@"minTimeBetweenSessionsMillis"]) {
@@ -27,7 +27,7 @@
         }
 
         // Initialize Amplitude
-        self.amplitude = [[Amplitude alloc] initWithConfiguration:amplitudeConfig];
+        self.amplitude = [Amplitude initWithConfiguration:amplitudeConfig];
 
         // Set user ID if provided
         if (config[@"userId"] && [config[@"userId"] length] > 0) {
@@ -50,12 +50,12 @@
         NSString *eventName = [command.arguments objectAtIndex:0];
         NSDictionary *properties = [command.arguments objectAtIndex:1];
 
-        // Create BaseEvent and track it
-        AMPBaseEvent *event = [[AMPBaseEvent alloc] initWithEventType:eventName];
+        // Use simplified track method
         if (properties && [properties count] > 0) {
-            event.eventProperties = properties;
+            [self.amplitude track:eventName eventProperties:properties];
+        } else {
+            [self.amplitude track:eventName];
         }
-        [self.amplitude track:event];
 
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Event tracked successfully"];
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
@@ -78,9 +78,9 @@
         }
 
         if (userProperties && [userProperties count] > 0) {
-            AMPIdentify *identifyObj = [[AMPIdentify alloc] init];
+            AMPIdentify *identifyObj = [AMPIdentify new];
             for (NSString *key in userProperties) {
-                [identifyObj setWithProperty:key value:userProperties[key]];
+                [identifyObj set:key value:userProperties[key]];
             }
             [self.amplitude identify:identifyObj];
         }
@@ -117,9 +117,9 @@
         NSDictionary *properties = [command.arguments objectAtIndex:0];
 
         if (properties && [properties count] > 0) {
-            AMPIdentify *identifyObj = [[AMPIdentify alloc] init];
+            AMPIdentify *identifyObj = [AMPIdentify new];
             for (NSString *key in properties) {
-                [identifyObj setWithProperty:key value:properties[key]];
+                [identifyObj set:key value:properties[key]];
             }
             [self.amplitude identify:identifyObj];
         }
@@ -142,7 +142,7 @@
         NSNumber *price = [command.arguments objectAtIndex:2];
         NSString *revenueType = command.arguments.count > 3 ? [command.arguments objectAtIndex:3] : nil;
 
-        AMPRevenue *revenueObj = [[AMPRevenue alloc] init];
+        AMPRevenue *revenueObj = [AMPRevenue new];
         revenueObj.productId = productId;
         revenueObj.quantity = [quantity integerValue];
         revenueObj.price = [price doubleValue];

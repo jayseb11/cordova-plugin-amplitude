@@ -5,6 +5,7 @@ repositories {
 
 dependencies {
     implementation 'com.amplitude:analytics-android:1.+'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }
 
 android {

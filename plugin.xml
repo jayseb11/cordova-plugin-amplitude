@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-amplitude"
-        version="1.2.3">
+        version="1.2.4">
 
     <name>Amplitude</name>
     <description>Cordova plugin for Amplitude Analytics SDK</description>
@@ -12,6 +12,8 @@
     <js-module src="www/Amplitude.js" name="Amplitude">
         <clobbers target="window.Amplitude" />
     </js-module>
+
+    <hook type="before_plugin_install" src="scripts/fix-podfile-target.js" />
 
     <!-- iOS Platform -->
     <platform name="ios">
